@@ -1,0 +1,32 @@
+Metadata-Version: 1.1
+Name: rq-scheduler-dashboard
+Version: 0.0.2
+Summary: rq-scheduler-dashboard is a copy of rq-dashboard for rq-scheduler jobs, based on the code from this PR: https://github.com/ducu/rq-dashboard/pull/95
+Home-page: https://github.com/lamflam/rq-scheduler-dashboard
+Author: Kevin LaFlamme
+Author-email: laflamme.kevin@gmail.com
+License: BSD
+Description: UNKNOWN
+Platform: any
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: MacOS
+Classifier: Operating System :: Unix
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Internet
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: System :: Distributed Computing
+Classifier: Topic :: System :: Systems Administration
+Classifier: Topic :: System :: Monitoring
