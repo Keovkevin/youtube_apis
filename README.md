@@ -89,3 +89,5 @@ celery -A app_name worker -l info
 celery -A app_name beat -l info
 
 # Need to check YOUTUBE_API_KEYS and query to extract data
+
+# adding postman collection for url and payload definition : https://www.getpostman.com/collections/1573e12927edce8631a6
