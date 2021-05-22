@@ -79,13 +79,13 @@ To Run the server: "src/redis-server"
 
 # pip install -r requirements.txt
 
-# Enabling redis worker and scheduler and other services in order
+# Enabling redis server and using celery worker and beat
 src/redis-server
 
 python manage.py runserver
 
-python manage.py rqworker default
+celery -A app_name worker -l info
 
-python manage.py rqschedule
+celery -A app_name beat -l info
 
-
+# Need to check YOUTUBE_API_KEYS and query to extract data
