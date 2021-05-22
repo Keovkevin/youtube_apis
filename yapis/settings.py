@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_rq',
+    'django_celery_beat',
     'videosapp.apps.VideosappConfig',
 ]
 
@@ -161,13 +161,17 @@ RQ_QUEUES = {
     "DEFAULT_RESULT_TTL": 5000,
 }
 
-YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/search"
+YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/search/"
 
-YOUTUBE_API_KEYS = [
-    "AIzaSyDVIx1Nc_0Vbga5VCKocGTWVmGd038AuOw",
-    "AIzaSyBE8MByQDhGWk_3lSFQszTUxalkgs-z-6Y",
-    "AIzaSyDr7VbhGTjMs8dc3N95x4iGzh2L-SDUdlY",
-    "AIzaSyDFnxYdjxR0XwfMee2HRZhYTTNwWgcmQ78",
-]
+YOUTUBE_API_KEYS = "AIzaSyDVIx1Nc_0Vbga5VCKocGTWVmGd038AuOw"
 
 YOUTUBE_SEARCH_LIST = ["cricket125", "football125"]
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER","redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER","redis://localhost:6379/0")
+CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_BEAT_SCHEDULE = {}
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_CELERYBEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

@@ -11,9 +11,6 @@ class YVideoData(models.Model):
     publishing_datetime = models.DateTimeField(blank=True, default=datetime.now)
     thumbnail_url = models.CharField(max_length=254, null=True, blank=True)
 
-    def __str__(self):
-        return "%s %s" % (self.id, self.title[:10])
-
     class Meta:
         managed = False
         db_table = 'yvideo_data'

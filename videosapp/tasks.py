@@ -1,95 +1,55 @@
+import json
 from videosapp.models import YVideoData
-from django_rq import job
+from django.utils import dateparse
+from yapis.settings import YOUTUBE_API_KEYS,YOUTUBE_API_URL
 
-from yapis.settings import (
-    YOUTUBE_API_URL,
-    YOUTUBE_API_KEYS,
-    YOUTUBE_SEARCH_LIST,
-)
-
+from celery import shared_task
+from celery.utils.log import get_task_logger
 import requests
 
 
-@job("default")
-def fetch_youtube_data():
-    import ipdb;
-    ipdb.set_trace()
-    # Creating the GET API to query youtube
-    print("Task Initiated")
-    url = YOUTUBE_API_URL
-    api_key_index = 0
-    page_token = ""
+logger = get_task_logger(__name__)
 
-    # Loop for multiple requests in case of multiple records or api_key exhausted
+@shared_task
+def youtube_task():
+    print("Youtube data is being fetched")
+    page_token = ""
     while True:
         params = {
-            "part": "snippet",
-            "maxResults": 50,
-            "type": "video",
-            "key": YOUTUBE_API_KEYS[api_key_index],
-            "pageToken": page_token,
-            "publishedAfter": "2018-01-01T00:00:00Z",
-            "order": "date",
-            "q": "|".join(YOUTUBE_SEARCH_LIST),
+            "part":"snippet",
+            "maxResults":50,
+            "type":"video",
+            "key":"AIzaSyBE8MByQDhGWk_3lSFQszTUxalkgs-z-6Y",
+            "pageToken":page_token,
+            "publishedAfter":"2015-01-01T00:00:00Z",
+            "order":"date",
+            "q":"live",
         }
-        print("Accessing Youtube Data with API_KEY: ", YOUTUBE_API_KEYS[api_key_index])
-
-        try:
-            response = requests.get(url, params=params)
-        except Exception as exc:
-            print("Exception while accessing the search API")
-            print("Exception: " + str(exc))
-            return
-
-        # If status is 200
+        print("Accessing Youtube Data with API_KEY: ", YOUTUBE_API_KEYS)
+        print(YOUTUBE_API_URL)
+        response = requests.get(YOUTUBE_API_URL, params=params)
+        print(response)
         if response.status_code == 200:
             json_response = response.json()
-
-            # Iterating the QuerySet received
-            for item in json_response.get("items", []):
-                video_id = item.get("id", {}).get("videoId")
-                snippet_data = item.get("snippet", {})
+            
+            for i in json_response.get("items", []):
+                video_id = i.get("id", {}).get("videoId")
+                snippet_data = i.get("snippet", {})
                 if snippet_data:
+                    print(i)
                     try:
-                        (obj, created) = YVideoData.objects.get_or_create(
-                            id=video_id,
-                            title=snippet_data.get("title"),
-                            description=snippet_data.get("description"),
-                            publishing_datetime=snippet_data.get("publishedAt"),
-                            defaults={
-                                "thumbnails_urls": snippet_data.get("thumbnails", {})
-                                .get("default", {})
-                                .get("url")
-                            },
-                        )
-                        if created:
-                            print("Successfully Created: ", obj.title)
+                        p = YVideoData()
+                        p.id = video_id
+                        if type(i['snippet']['title'])=='str':
+                            p.title = str(i['snippet']['title'])
+                        else:
+                            p.title = 'title not as string'
+                        p.description = i['snippet']['description']
+                        p.publishing_datetime = dateparse.parse_datetime(i['snippet']['publishedAt'])
+                        p.thumbnails_urls = i['snippet']['thumbnails']['default']['url']
+                        p.save()
                     except Exception as exc:
                         print("Exception in saving data to db")
                         print("Exception: " + str(exc))
                         return
-
-            # Flag to check if subsequent call is required
-            if json_response.get("nextPageToken"):
-                page_token = json_response["nextPageToken"]
-                continue
-            break
-
-        # If status is other than 200
-        else:
-            print(
-                "Issue in Youtube Search Calls, Response: ",
-                response.status_code,
-                " Params: ",
-                params,
-            )
-            if response.status_code == 403:
-                api_key_index += 1
-                if api_key_index >= len(YOUTUBE_API_KEYS):
-                    print("All API Keys Exhausted")
-                    return
-                else:
-                    continue
-            return
-
-    return
+            print("Youtube data saved to database")
