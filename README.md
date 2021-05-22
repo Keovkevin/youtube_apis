@@ -13,3 +13,79 @@ To make an API to fetch latest videos sorted in reverse chronological order of t
 - Search API reference: [https://developers.google.com/youtube/v3/docs/search/list](https://developers.google.com/youtube/v3/docs/search/list)
     - To fetch the latest videos you need to specify these: type=video, order=date, publishedAfter=<SOME_DATE_TIME>
     - Without publishedAfter, it will give you cached results which will be too old
+
+# Database configuration
+python3 -m venv env
+
+source env/bin/activate
+
+install mysql the start the service
+
+install mysql workbench
+
+## Rescan servers: It finds the running MySQL instance and saves that connection in the MySQL connections area
+
+1.Click the Schema tab
+
+2.Right-click in the Schema list and select Create Schema
+
+3.Give it a name and follow the prompts to create it
+
+## Set up db user
+
+1.Select the Administration tab
+
+2.Select Users and Privileges
+
+3.Click Add Account
+
+4.Give your user a name and password
+
+5.Assign Administrative Roles and Schema Privileges
+
+## install mysql client
+
+## Open settings.py for the Django project
+
+By default, you’ll see that it is configured to use SQLite
+
+Update the connection string following the example below. Use your own values for Name (this is the schema created earlier), User, Password and Port (you can find the port from Server Status in the Administration tab if needed).
+
+DATABASES = {
+    ‘default’: {
+        ‘ENGINE’: ‘django.db.backends.mysql’,
+        ‘NAME’: ‘sunforge’,
+        ‘USER’: ‘dbadmin’,
+        ‘PASSWORD’: ‘password’,
+        ‘HOST’: ‘127.0.0.1',
+        ‘PORT’: ‘3306',
+    }
+}
+
+python manage.py migrate
+
+You should see it reporting in the terminal that it is migrating tables for all the INSTALLED_APPS.
+
+# Installing Redis
+1.curl -O http://download.redis.io/releases/redis-5.0.5.tar.gz 
+
+2.tar xzf redis-5.0.5.tar.gz
+
+3.cd redis-5.0.5
+
+4.make
+
+To Run the server: "src/redis-server"
+
+# pip install -r requirements.txt
+
+# Enabling redis worker and scheduler and other services in order
+src/redis-server
+
+python manage.py runserver
+
+python manage.py rqworker default
+
+python manage.py rqschedule
+
+
